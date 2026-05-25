@@ -59,8 +59,8 @@ mkdir -p /etc/net/ifaces/tun0
 cat > /etc/net/ifaces/tun0/options <<EOF
 TYPE=iptun
 TUNTYPE=gre
-TUNLOCAL=172.16.1.1
-TUNREMOTE=172.16.2.1
+TUNLOCAL=172.16.1.2
+TUNREMOTE=172.16.2.2
 TUNTTL=64
 TUNOPTIONS='ttl 64'
 HOST=enp0s3
