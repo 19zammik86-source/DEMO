@@ -1,4 +1,8 @@
 #!/bin/bash
+#Создание enp0s8
+mkdir -p /etc/net/ifaces/enp0s8
+cp -r /etc/net/ifaces/enp0s3/options /etc/net/ifaces/enp0s8/options
+
 # Создание VLAN 100
 mkdir -p /etc/net/ifaces/enp0s8.100/
 cat > /etc/net/ifaces/enp0s8.100/options <<EOF
