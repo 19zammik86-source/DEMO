@@ -125,8 +125,8 @@ gpasswd -a net_admin wheel
 # 4. Настройка sudo без пароля
 echo "net_admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# 5. Настройка SSH (порт 2026 и запрет root-логина)
-sed -i 's/#Port 22/Port 2026/' /etc/openssh/sshd_config
+# 5. Настройка SSH (порт 2027 и запрет root-логина)
+sed -i 's/#Port 22/Port 2027/' /etc/openssh/sshd_config
 sed -i 's/#PermitRootLogin without-password/PermitRootLogin no/' /etc/openssh/sshd_config
 
 # 6. Перезапуск SSH
