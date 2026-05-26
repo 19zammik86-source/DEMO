@@ -38,3 +38,7 @@ EOF
 
 systemctl start ipsec
 systemctl enable --now strongswan-starter
+
+
+apt-get install -y tcpdump
+tcpdump -i enp0s3 -n esp
