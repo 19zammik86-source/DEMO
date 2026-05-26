@@ -4,12 +4,12 @@ Networking:
       ansible_host: 172.16.1.2
       ansible_user: net_admin
       ansible_password: P@ssw0rd
-      ansible_port: 2026
+      ansible_port: 2027
     br-rtr:
       ansible_host: 172.16.2.2
       ansible_user: net_admin
       ansible_password: P@ssw0rd
-      ansible_port: 2026
+      ansible_port: 2027
 Servers:
   hosts:
     hq-srv:
