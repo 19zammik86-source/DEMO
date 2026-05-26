@@ -13,19 +13,19 @@ Networking:
 Servers:
   hosts:
     hq-srv:
-      ansible_host: 10.1.1.1
+      ansible_host: 192.168.100.2
       ansible_user: sshuser
       ansible_password: P@ssw0rd
-      ansible_port: 2024
+      ansible_port: 2027
     br-srv:
-      ansible_host: 10.2.2.1
+      ansible_host: 192.168.0.2
       ansible_user: sshuser
       ansible_password: P@ssw0rd
-      ansible_port: 2024
+      ansible_port: 2027
 Clients:
   hosts:
     hq-cli:
-      ansible_host: 10.1.1.65
+      ansible_host: 192.168.200.4
       ansible_user: user
       ansible_password: resu
-      ansible_port: 2024
+      ansible_port: 2027
