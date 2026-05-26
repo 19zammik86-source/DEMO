@@ -1,4 +1,6 @@
 #!/bin/bash
+apt-get update && apt-get install -y yandex-browser-stable
+
 
 # Монтирование RAID 
 mkdir /mnt/nfs
