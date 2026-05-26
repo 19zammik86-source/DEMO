@@ -41,7 +41,7 @@ apt-get update && apt-get install -y dnsmasq
 cat > /etc/dnsmasq.conf <<EOF
 no-resolv
 domain=au-team.irpo
-dhcp-range=192.168.200.2,192.168.200.20,999h
+dhcp-range=192.168.200.2,192.168.200.10,999h
 dhcp-option=3,192.168.200.1
 dhcp-option=6,192.168.100.2
 dhcp-option=15,au-team.irpo
