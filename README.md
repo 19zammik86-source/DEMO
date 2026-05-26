@@ -32,3 +32,5 @@ nano /etc/chrony.conf
     Находим и меняем pool на pool 172.16.1.1 iburst (указываем адрес ISP)
 
 systemctl restart chronyd
+  5. Произведем настройку HQ-CLI. При включении машина должна получить адрес динамически от HQ-RTR.
+  Запускаем скрипт HQ-CLI.sh и монтируем RAID
