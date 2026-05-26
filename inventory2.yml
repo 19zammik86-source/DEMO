@@ -1,15 +1,10 @@
----
-- name: inventory of machines HQ-SRV and HQ-CLI
-  hosts:
-    - hq-srv.au-team.irpo
-    - hq-cli.au-team.irpo
-  gather_facts: yes
-  tasks:
-    - name: create a report with workplace information
-      delegate_to: localhost
-      copy:
-        dest: "/etc/ansible/PC_INFO/{{ ansible_hostname }}.yml"
-        content: |
-          ---
-          name pc: "{{ ansible_hostname }}"
-          ip-address pc: "{{ ansible_default_ipv4.address }}"
+- name: Get_hostname
+ hosts: hq-srv,hq-cli
+ tasks:
+ - name: Save hostname ip
+ copy:
+ dest: /etc/ansible/PC-INFO/{{ ansible_hostname }}.yml
+ content: |
+ Hostname: {{ ansible_hostname }}
+ IP_Address: {{ ansible_default_ipv4.address }}
+ delegate_to: localhost
