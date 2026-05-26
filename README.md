@@ -34,3 +34,16 @@ nano /etc/chrony.conf
 systemctl restart chronyd
   5. Произведем настройку HQ-CLI. При включении машина должна получить адрес динамически от HQ-RTR.
   Запускаем скрипт HQ-CLI.sh и монтируем RAID
+  6. На машине BR-SRV назначьте адрес, настройте шлюз по умолчанию (192.168.0.2/28, шлюз 192.168.0.1, в файле по адресу /etc/net/ifaces/enp0s3/resolv.conf добавлена строка nameserver 77.88.8.8 )
+  скачайте скрипт и после создания скриптом юзера настройте ансибл. Файл inventory.yml скачается автоматом.
+  nano inventory.yml
+
+    Меняем адрес клиента на свой
+
+nano ansibe.cfg
+
+    interpreter_python = /usr/bin/python3
+    inventory = /etc/ansible/inventory.yml
+    host_key_checking = false
+
+ansible -m ping all
