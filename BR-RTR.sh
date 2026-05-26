@@ -55,6 +55,11 @@ EOF
 
 echo "Настройка OSPF завершена!"
 
+#ставим NAT 
+iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE 
+iptables-save >> /etc/sysconfig/iptables
+systemctl enable --now iptables
+
 # 1. Создание пользователя net_admin (ЛИБО ДРУГОГО ПОЛЬЗОВАТЕЛЯ, ПРИ СМЕНЕ ПОМЕНЯТЬ В ЭТОМ ФАЙЛЕ ИМЯ И Т.Д)
 useradd -m net_admin
 
