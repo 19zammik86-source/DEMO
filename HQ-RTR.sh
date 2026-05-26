@@ -132,6 +132,6 @@ sed -i 's/#PermitRootLogin without-password/PermitRootLogin no/' /etc/openssh/ss
 # 6. Перезапуск SSH
 systemctl restart sshd
 
-echo "Готово! Пользователь net_admin создан, SSH настроен на порт 2026."
+echo "Готово! Пользователь net_admin создан, SSH настроен на порт 2027."
 
 
