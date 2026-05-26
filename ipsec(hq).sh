@@ -1,3 +1,10 @@
+#Поправим файл /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver 77.88.8.8
+EOF
+
+
+
 #Настроим IPSEC
 apt-get install -y strongswan 
 
