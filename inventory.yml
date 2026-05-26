@@ -1,0 +1,31 @@
+Networking:
+  hosts:
+    hq-rtr:
+      ansible_host: 172.16.1.2
+      ansible_user: net_admin
+      ansible_password: P@ssw0rd
+      ansible_port: 2026
+    br-rtr:
+      ansible_host: 172.16.2.2
+      ansible_user: net_admin
+      ansible_password: P@ssw0rd
+      ansible_port: 2026
+Servers:
+  hosts:
+    hq-srv:
+      ansible_host: 10.1.1.1
+      ansible_user: sshuser
+      ansible_password: P@ssw0rd
+      ansible_port: 2024
+    br-srv:
+      ansible_host: 10.2.2.1
+      ansible_user: sshuser
+      ansible_password: P@ssw0rd
+      ansible_port: 2024
+Clients:
+  hosts:
+    hq-cli:
+      ansible_host: 10.1.1.65
+      ansible_user: user
+      ansible_password: resu
+      ansible_port: 2024
