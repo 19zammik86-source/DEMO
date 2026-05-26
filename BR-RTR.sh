@@ -57,6 +57,7 @@ echo "Настройка OSPF завершена!"
 
 #ставим NAT 
 iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE 
+iptables -t nat -A PREROUTING -p tcp -d 192.168.0.1 --dport 2027 -j DNAT --to-destination 192.168.0.2:2027
 iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables
 
@@ -72,14 +73,14 @@ gpasswd -a net_admin wheel
 # 4. Настройка sudo без пароля
 echo "net_admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# 5. Настройка SSH (порт 2026 и запрет root-логина)
-sed -i 's/#Port 22/Port 2026/' /etc/openssh/sshd_config
+# 5. Настройка SSH (порт 2027 и запрет root-логина)
+sed -i 's/#Port 22/Port 2027/' /etc/openssh/sshd_config
 sed -i 's/#PermitRootLogin without-password/PermitRootLogin no/' /etc/openssh/sshd_config
 
 # 6. Перезапуск SSH
 systemctl restart sshd
 
-echo "Готово! Пользователь net_admin создан, SSH настроен на порт 2026."
+echo "Готово! Пользователь net_admin создан, SSH настроен на порт 2027."
 
 #Проверка туннеля
 ping 10.10.10.1
