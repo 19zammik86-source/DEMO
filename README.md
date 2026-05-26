@@ -12,4 +12,23 @@ iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE (так в нашем с�
 
  3. На машине HQ-SRV назначьте адрес из влана 100, настройте шлюз по умолчанию (192.168.100.2/28, шлюз 192.168.100.1, в файле по адресу /etc/net/ifaces/enp0s3/resolv.conf добавлена строка nameserver 77.88.8.8 )
     Запустите скрипт произойдет настройка ДНС и RAID.
- 4. 
+ 4. Службу времени настраиваем в ручную. 
+    В ISP находим и удаляем строку pool в самом низу, затем добавляем:
+
+nano /etc/chrony.conf
+
+    local stratum 5
+    allow 0/0
+
+nano /etc/hosts
+
+    192.168.0.1 br-rtr.au-team.irpo
+
+systemctl restart chronyd
+
+Для всех остальных:
+nano /etc/chrony.conf
+
+    Находим и меняем pool на pool 172.16.1.1 iburst (указываем адрес ISP)
+
+systemctl restart chronyd
