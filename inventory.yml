@@ -26,6 +26,6 @@ Clients:
   hosts:
     hq-cli:
       ansible_host: 192.168.200.4
-      ansible_user: user
-      ansible_password: resu
+      ansible_user: sshuser
+      ansible_password: P@ssw0rd
       ansible_port: 2027
