@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Настройка маршутизации
+sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
+
 #Создание enp0s8
 mkdir -p /etc/net/ifaces/enp0s8
 cp -r /etc/net/ifaces/enp0s3/options /etc/net/ifaces/enp0s8/options
