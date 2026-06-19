@@ -33,6 +33,9 @@ echo "192.168.100.1/27" > /etc/net/ifaces/enp0s8.100/ipv4address
 echo "192.168.200.1/28" > /etc/net/ifaces/enp0s8.200/ipv4address
 echo "192.168.99.1/29" > /etc/net/ifaces/enp0s8.999/ipv4address
 
+# Настройка маршутизации
+sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
+
 # Перезапуск сети
 systemctl restart network
 
