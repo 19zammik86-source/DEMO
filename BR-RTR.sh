@@ -4,9 +4,9 @@
 sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
 
 #Создание enp0s8
-mkdir -p /etc/net/ifaces/enp0s8
-cp -r /etc/net/ifaces/enp0s3/options /etc/net/ifaces/enp0s8/options
-echo "192.168.0.1/28" > /etc/net/ifaces/enp0s8/ipv4address
+mkdir -p /etc/net/ifaces/enp7s2
+cp -r /etc/net/ifaces/enp7s1/options /etc/net/ifaces/enp7s2/options
+echo "192.168.0.1/28" > /etc/net/ifaces/enp7s2/ipv4address
 
 
 # Создаем директорию и файлы конфигурации
@@ -20,7 +20,7 @@ TUNLOCAL=172.16.2.2
 TUNREMOTE=172.16.1.2
 TUNTTL=64
 TUNOPTIONS='ttl 64'
-HOST=enp0s3
+HOST=enp7s1
 EOF
 
 # Файл ipv4address
@@ -60,7 +60,8 @@ EOF
 echo "Настройка OSPF завершена!"
 
 #ставим NAT 
-iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE 
+apt-get install iptables -y
+iptables -t nat -A POSTROUTING -o enp7s1 -j MASQUERADE 
 iptables -t nat -A PREROUTING -p tcp -d 192.168.0.1 --dport 2027 -j DNAT --to-destination 192.168.0.2:2027
 iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables
