@@ -1,37 +1,37 @@
 #!/bin/bash
-#Создание enp0s8
-mkdir -p /etc/net/ifaces/enp0s8
-cp -r /etc/net/ifaces/enp0s3/options /etc/net/ifaces/enp0s8/options
+#Создание enp7s2
+mkdir -p /etc/net/ifaces/enp7s2
+cp -r /etc/net/ifaces/enp7s1/options /etc/net/ifaces/enp7s2/options
 
 # Создание VLAN 100
-mkdir -p /etc/net/ifaces/enp0s8.100/
-cat > /etc/net/ifaces/enp0s8.100/options <<EOF
+mkdir -p /etc/net/ifaces/enp7s2.100/
+cat > /etc/net/ifaces/enp7s2.100/options <<EOF
 TYPE=vlan
-HOST=enp0s8
+HOST=enp7s2
 VID=100
 BOOTPROTO=static
 EOF
 
 # Создание VLAN 200
-mkdir -p /etc/net/ifaces/enp0s8.200/
-cat > /etc/net/ifaces/enp0s8.200/options <<EOF
+mkdir -p /etc/net/ifaces/enp7s2.200/
+cat > /etc/net/ifaces/enp7s2.200/options <<EOF
 TYPE=vlan
-HOST=enp0s8
+HOST=enp7s2
 VID=200
 BOOTPROTO=static
 EOF
 
 # Создание VLAN999
-mkdir -p /etc/net/ifaces/enp0s8.999/
-cat > /etc/net/ifaces/enp0s8.999/options <<EOF
+mkdir -p /etc/net/ifaces/enp7s2.999/
+cat > /etc/net/ifaces/enp7s2.999/options <<EOF
 TYPE=vlan
 HOST=enp0s8
 VID=999
 BOOTPROTO=static
 EOF
-echo "192.168.100.1/27" > /etc/net/ifaces/enp0s8.100/ipv4address
-echo "192.168.200.1/28" > /etc/net/ifaces/enp0s8.200/ipv4address
-echo "192.168.99.1/29" > /etc/net/ifaces/enp0s8.999/ipv4address
+echo "192.168.100.1/27" > /etc/net/ifaces/enp7s2.100/ipv4address
+echo "192.168.200.1/28" > /etc/net/ifaces/enp7s2.200/ipv4address
+echo "192.168.99.1/29" > /etc/net/ifaces/enp7s2.999/ipv4address
 
 # Настройка маршутизации
 sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
@@ -48,7 +48,7 @@ dhcp-range=192.168.200.2,192.168.200.10,999h
 dhcp-option=3,192.168.200.1
 dhcp-option=6,192.168.100.2
 dhcp-option=15,au-team.irpo
-interface=enp0s8.200
+interface=enp7s2.200
 EOF
 
 # Включение и запуск dnsmasq
@@ -66,7 +66,7 @@ TUNLOCAL=172.16.1.2
 TUNREMOTE=172.16.2.2
 TUNTTL=64
 TUNOPTIONS='ttl 64'
-HOST=enp0s3
+HOST=enp7s1
 EOF
 
 # Файл ipv4address
