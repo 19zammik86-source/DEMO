@@ -112,7 +112,7 @@ echo "Настройка OSPF завершена!"
 
 #ставим NAT 
 apt-get install iptables -y
-iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE 
+iptables -t nat -A POSTROUTING -o enp7s1 -j MASQUERADE 
 #iptables -t nat -A PREROUTING -p tcp -d 192.168.100.1 --dport 2027 -j DNAT --to-destination 192.168.100.2:2027
 iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables
