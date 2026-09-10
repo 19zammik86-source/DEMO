@@ -25,7 +25,7 @@ EOF
 mkdir -p /etc/net/ifaces/enp7s2.999/
 cat > /etc/net/ifaces/enp7s2.999/options <<EOF
 TYPE=vlan
-HOST=enp0s8
+HOST=enp7s2
 VID=999
 BOOTPROTO=static
 EOF
