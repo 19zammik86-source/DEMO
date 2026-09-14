@@ -2,8 +2,25 @@
 # Настройка hostname
 hostnamectl set-hostname br-rtr.au-team.irpo
 
+apt-get update && apt-get install -y chrony tzdata
+
+cat <<EOF > /etc/chrony.conf
+        pool pool.ntp.org iburst
+        local stratum 5
+        allow 0/0
+        driftfile /var/lib/chrony/drift
+        makestep 1.0 3
+        ntsdumpdir /var/lib/chrony
+        logdir /var/log/chrony
+        EOF
+        
 # Настрока часового пояса
 timedatectl set-timezone Asia/Krasnoyarsk
+
+
+systemctl enable --now chronyd
+        systemctl restart chronyd
+        
 # Настройка маршутизации
 sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
 
