@@ -1,3 +1,4 @@
+#!/bin/bash
 hostnamectl set-hostname br-srv.au-team.irpo
 
 apt-get update && apt-get install -y chrony tzdata
