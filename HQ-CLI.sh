@@ -1,5 +1,25 @@
 #!/bin/bash
-apt-get update && apt-get install -y yandex-browser-stable
+
+hostnamectl set-hostname hq-cli.au-team.irpo
+
+apt-get update && apt-get install -y chrony tzdata
+
+cat <<EOF > /etc/chrony.conf
+        pool 172.16.1.1 iburst
+        driftfile /var/lib/chrony/drift
+        makestep 1.0 3
+        rtcsync
+        ntsdumpdir /var/lib/chrony
+        logdir /var/log/chrony
+        EOF
+        
+# Настрока часового пояса
+timedatectl set-timezone Asia/Krasnoyarsk
+
+
+systemctl enable --now chronyd
+        systemctl restart chronyd
+apt-get update install -y yandex-browser-stable
 
 
 # Монтирование RAID 
