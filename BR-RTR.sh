@@ -18,7 +18,7 @@ timedatectl set-timezone Asia/Krasnoyarsk
 
 
 systemctl enable --now chronyd
-        systemctl restart chronyd
+systemctl restart chronyd
         
 # Настройка маршутизации
 sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
