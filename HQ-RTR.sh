@@ -1,20 +1,6 @@
 #!/bin/bash
 # Настройка hostname
 hostnamectl set-hostname hq-rtr.au-team.irpo
-apt-get update && apt-get install -y chrony tzdata
-
- cat <<EOF > /etc/chrony.conf
-        pool pool.ntp.org iburst
-        local stratum 5
-        allow 0/0
-        driftfile /var/lib/chrony/drift
-        makestep 1.0 3
-        ntsdumpdir /var/lib/chrony
-        logdir /var/log/chrony
-        EOF
-
-# Настрока часового пояса
-timedatectl set-timezone Asia/Krasnoyarsk
 
 #Создание enp7s2
 mkdir -p /etc/net/ifaces/enp7s2
