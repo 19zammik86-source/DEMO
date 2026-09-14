@@ -94,6 +94,7 @@ useradd -m net_admin
 echo "net_admin:P@ssw0rd" | chpasswd
 
 # 3. Добавление в группу wheel
+apt-get install -y shadow-groups
 gpasswd -a net_admin wheel
 
 # 4. Настройка sudo без пароля
