@@ -1,3 +1,22 @@
+hostnamectl set-hostname br-srv.au-team.irpo
+
+apt-get update && apt-get install -y chrony tzdata
+
+cat <<EOF > /etc/chrony.conf
+        pool 172.16.1.1 iburst
+        driftfile /var/lib/chrony/drift
+        makestep 1.0 3
+        rtcsync
+        ntsdumpdir /var/lib/chrony
+        logdir /var/log/chrony
+        EOF
+        
+# Настрока часового пояса
+timedatectl set-timezone Asia/Krasnoyarsk
+
+
+systemctl enable --now chronyd
+        systemctl restart chronyd
 echo "Настройка SSH"
 
 # Создание пользователя sshuser с UID 2027 (МЕНЯЙТЕ ИМЯ И Т.Д В ЗАВИСИМОСТИ ОТ ЗАДАНИЯ)
