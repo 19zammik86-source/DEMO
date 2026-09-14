@@ -11,7 +11,7 @@ cat <<EOF > /etc/chrony.conf
         rtcsync
         ntsdumpdir /var/lib/chrony
         logdir /var/log/chrony
-        EOF
+ EOF
         
 # Настрока часового пояса
 timedatectl set-timezone Asia/Krasnoyarsk
