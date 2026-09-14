@@ -1,5 +1,9 @@
 #!/bin/bash
+# Настройка hostname
+hostnamectl set-hostname br-rtr.au-team.irpo
 
+# Настрока часового пояса
+timedatectl set-timezone Asia/Krasnoyarsk
 # Настройка маршутизации
 sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
 
@@ -62,7 +66,8 @@ echo "Настройка OSPF завершена!"
 #ставим NAT 
 apt-get install iptables -y
 iptables -t nat -A POSTROUTING -o enp7s1 -j MASQUERADE 
-iptables -t nat -A PREROUTING -p tcp -d 192.168.0.1 --dport 2027 -j DNAT --to-destination 192.168.0.2:2027
+iptables -t nat -A PREROUTING -i enp7s1 -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:8080
+iptables -t nat -A PREROUTING -i enp7s1 -p tcp --dport 2027 -j DNAT --to-destination 192.168.0.2:2027
 iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables
 
