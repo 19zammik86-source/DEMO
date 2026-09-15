@@ -6,6 +6,7 @@ hostnamectl set-hostname isp.au-team.irpo
 
 
 # Настрока часового пояса
+apt-get update && apt-get install -y chrony tzdata
 timedatectl set-timezone Asia/Krasnoyarsk
 
 # Создаем директории для интерфейсов
