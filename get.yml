@@ -1,0 +1,19 @@
+- name: Get_hostname
+  hosts: hq-srv,hq-cli
+  gather_facts: true
+  tasks:
+    - name: Create info directory
+      file:
+        path: /etc/ansible/PC-INFO
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+
+    - name: Save hostname and ip
+      copy:
+        dest: /etc/ansible/PC-INFO/{{ ansible_hostname }}.yml
+        content: |
+          Hostname: {{ ansible_hostname }}
+          IP_Address: {{ ansible_default_ipv4.address }}
+      delegate_to: localhost
