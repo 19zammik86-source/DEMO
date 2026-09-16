@@ -12,7 +12,7 @@
 
     - name: Save hostname and ip
       copy:
-        dest: /etc/ansible/PC-INFO/{{ ansible_hostname }}.yml
+        dest: /etc/ansible/PC_INFO/{{ ansible_hostname }}.yml
         content: |
           Hostname: {{ ansible_hostname }}
           IP_Address: {{ ansible_default_ipv4.address }}
