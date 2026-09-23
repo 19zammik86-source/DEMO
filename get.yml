@@ -4,7 +4,7 @@
   tasks:
     - name: Create info directory
       file:
-        path: /etc/ansible/PC-INFO
+        path: /etc/ansible/PC_INFO
         state: directory
         mode: '0755'
       delegate_to: localhost
