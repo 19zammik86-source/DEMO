@@ -1,4 +1,3 @@
----
 - name: inventory of machines HQ-SRV and HQ-CLI
   hosts:
     - hq-srv.au-team.irpo
@@ -10,6 +9,5 @@
       copy:
         dest: "/etc/ansible/PC_INFO/{{ ansible_hostname }}.yml"
         content: |
-          ---
           name pc: "{{ ansible_hostname }}"
           ip-address pc: "{{ ansible_default_ipv4.address }}"
