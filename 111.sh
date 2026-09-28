@@ -658,15 +658,15 @@ echo;
 
 # 3.5 --- Мониторинг atop
 tire;
-echo "$c_info 3.6 -------  Проверка утилиты состояния сервера atop на HQ-SRV ---------------------$c_null";
+echo "$c_info 3.5 -------  Проверка утилиты состояния сервера atop на HQ-SRV ---------------------$c_null";
   echo "$c_lgreen ------- статус загрузки пакета atop  $c_null";
   qm guest exec $((std+2)) rpm \-- -q atop  | jq -r '."out-data"'
   echo "$c_lgreen --- статус службы atop  $c_null";
   qm guest exec $((std+2)) systemctl status atop | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- содержание файла /etc/default/atop  $c_null";
-  qm guest exec $((std+2)) cat /etc/default/atop | jq -r '."out-data"'| sed -n "/<Location /,/<\/Location/p"
+  qm guest exec $((std+2)) cat /etc/default/atop | jq -r '."out-data"'
   echo "$c_lgreen --- проверка журнала логов $c_null";
-  qm guest exec $((std+2)) ls -la /var/log/atop | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
+  qm guest exec $((std+2)) cat /var/log/atop | jq -r '."out-data"'
   echo;
 #pressEnter;
 
