@@ -364,7 +364,7 @@ echo "$c_info 1.9 --------- Проверка настройки DHCP  ----------
   echo "$c_info --- Проверка динамического адреса на HQ-CLI $c_null";
   echo "$c_lgreen --- содержание файла  options  $c_null";
   qm guest exec $((std+3)) cat /etc/net/ifaces/enp7s1/options | jq -r '."out-data"' | grep BOOTPROTO;
-  echo "$c_lgreen --- настройка интерфейса enp6s18  $c_null";
+  echo "$c_lgreen --- настройка интерфейса enp7s1  $c_null";
   qm guest exec $((std+3)) ip \-- -c a | jq -r '."out-data"' | grep -v lo | grep dynamic;
   qm guest exec $((std+3)) ip \-- -c a | jq -r '."out-data"' | grep enp6s18;
 echo;
