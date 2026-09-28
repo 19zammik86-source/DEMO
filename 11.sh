@@ -666,7 +666,7 @@ echo "$c_info 3.5 -------  Проверка утилиты состояния с
   echo "$c_lgreen --- содержание файла /etc/default/atop  $c_null";
   qm guest exec $((std+2)) cat /etc/default/atop | jq -r '."out-data"'
   echo "$c_lgreen --- проверка журнала логов $c_null";
-  qm guest exec $((std+2)) cat /var/log/atop | jq -r '."out-data"'
+  qm guest exec $((std+2)) ls /var/log/atop | jq -r '."out-data"'
   echo;
 #pressEnter;
 
