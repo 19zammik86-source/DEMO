@@ -24,9 +24,9 @@ c_value=${c_lblue}    ; c_error=${c_lred};
 c_warning=${c_lyellow}; c_info=${c_lcyan} ;
 c_ok=${c_lgreen} 
 
-#hqsrv=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep ens19 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-#brsrv=$(qm guest exec $((std+5)) ip \-- -br a | jq -r '."out-data"' | grep ens19 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-#hqcli=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep ens19 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+#hqsrv=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1.100 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+#brsrv=$(qm guest exec $((std+5)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+#hqcli=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
 # | iconv -f utf-8 -t latin1   конвертация из linux в windows
 
 function pressEnter {
@@ -68,9 +68,9 @@ echo "$c_info 1.1 --------------------- Базовая настройка уст
 # --- IP address
   echo "$c_lgreen --- IP-адресация ISP $c_null";
   #qm guest exec $std ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
-  isp_enp7s1=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep ens18 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-  isp_enp7s2=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep ens19 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-  isp_enp7s3=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep ens20 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  isp_enp7s1=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  isp_enp7s2=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep enp7s2 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  isp_enp7s3=$(qm guest exec $std ip \-- -br a | jq -r '."out-data"' | grep enp7s3 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   echo "enp7s1 = " $isp_18;     echo "enp7s2 = " $isp_19;   echo "enp7s3 = " $isp_20;
   echo; 
   echo "$c_lgreen --- IP-адресация HQ-RTR $c_null";
