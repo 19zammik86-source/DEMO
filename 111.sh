@@ -600,27 +600,7 @@ echo;
 #pressEnter;
 
 
-# 2.9 --- Nginx
-tire;
-echo "$c_info 2.9 ------------ Проверка установки и запуска Nginx  на  ISP  ------------------$c_null";
-  echo "$c_lgreen --- статус службы  nginx  $c_null";
-  qm guest exec $((std+0)) systemctl status nginx | jq -r '."out-data"' | grep "Active"
-  echo "$c_lgreen --- содержание файла nginx.conf  $c_null";
-  qm guest exec $((std+0)) cat /etc/nginx/sites-available.d/default.conf | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
-  qm guest exec $((std+0)) cat /etc/nginx/sites-available.d/proxy | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-echo;
-#pressEnter;
-
-# 2.10 --- Aut
-tire;
-echo "$c_info 2.10 ------------ Проверка web-based аутентификации на  ISP  ------------------$c_null";
-  echo "$c_lgreen --- содержание файла /etc/nginx/.htpasswd  $c_null";
-  qm guest exec $((std+0)) cat /etc/nginx/.htapasswd | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
-echo;
-#pressEnter;
-
-
-# 2.11 --- Yandex browser
+# 2.9 --- Yandex browser
 tire;
 echo "$c_info 2.11 ------------ Проверка установки Yandex Browser на  HR-CLI  -------------------$c_null";
   echo "$c_lgreen --- статус службы yandex-browser  $c_null";
@@ -648,67 +628,38 @@ echo "$c_info 3.1 --------------   Проверка миграции контр�
   #qm guest exec $((std+2)) samba-tool user list | jq -r '."out-data"' | grep -v .hq | wc -l ;
 echo;
 #pressEnter;
-
-# 3.2 --- Certification
+# 3.2 --- Nginx
 tire;
-echo "$c_info 3.2 ----------   Проверка настройки центра сертификации на HQ-SRV  ----------------$c_null";
+echo "$c_info 3.2 ------------ Проверка установки и запуска Nginx  на  ISP  ------------------$c_null";
+  echo "$c_lgreen --- статус службы  nginx  $c_null";
+  qm guest exec $((std+0)) systemctl status nginx | jq -r '."out-data"' | grep "Active"
+  echo "$c_lgreen --- содержание файла nginx.conf  $c_null";
+  qm guest exec $((std+0)) cat /etc/nginx/sites-available.d/default.conf | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
+  qm guest exec $((std+0)) cat /etc/nginx/sites-available.d/proxy | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+echo;
+#pressEnter;
+
+# 3.3 --- Aut
+tire;
+echo "$c_info 3.3 ------------ Проверка web-based аутентификации на  ISP  ------------------$c_null";
+  echo "$c_lgreen --- содержание файла /etc/nginx/.htpasswd  $c_null";
+  qm guest exec $((std+0)) cat /etc/nginx/.htapasswd | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
+echo;
+#pressEnter;
+
+
+# 3.4 --- Certification
+tire;
+echo "$c_info 3.4 ----------   Проверка настройки центра сертификации на HQ-SRV  ----------------$c_null";
   #qm guest exec $((std+2)) openssl ca  | grep ssl
   echo "$c_lgreen --- просмотр сертификата /ca/cacert.pem  $c_null";
   qm guest exec $((std+2)) openssl \-- x509 -text -noout -in /ca/cacert.pem | jq -r '."out-data"';
 echo;
 #pressEnter;
 
-# 3.3 --- Ipsec Tunnel
+# 3.6 --- Принт-сервер cups
 tire;
-echo "$c_info 3.3 ----------   Проверка настройки шифрования туннеля ----------------$c_null";
-  echo "$c_lgreen --- HQ-RTR  $c_null";
-  echo "$c_lgreen --- статус загрузки пакета strongswan  $c_null";
-  qm guest exec $((std+1)) rpm \-- -q strongswan | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы ipsec  $c_null";
-  qm guest exec $((std+1)) systemctl status ipsec.service | jq -r '."out-data"' | grep "Active";
-  echo;
-  qm guest exec $((std+1)) ipsec status | jq -r '."out-data"';
-  echo "$c_lgreen --- содержание файла ipsec.conf  $c_null";
-  qm guest exec $((std+1)) cat /etc/strongswan/ipsec.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo "$c_lgreen --- содержание файла ipsec.secrets  $c_null";
-  qm guest exec $((std+1)) cat /etc/strongswan/ipsec.secrets | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo;
- # pressEnter;
-  echo "$c_lgreen --- BR-RTR  $c_null";
-  echo "$c_lgreen --- статус загрузки пакета strongswan  $c_null";
-  qm guest exec $((std+2)) rpm \-- -q strongswan | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы ipsec  $c_null";
-  qm guest exec $((std+2)) systemctl status ipsec.service | jq -r '."out-data"' | grep "Active";
-  echo;
-  qm guest exec $((std+2)) ipsec status | jq -r '."out-data"';
-  echo "$c_lgreen --- содержание файла ipsec.conf  $c_null";
-  qm guest exec $((std+2)) cat /etc/strongswan/ipsec.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo "$c_lgreen --- содержание файла ipsec.secrets  $c_null";
-  qm guest exec $((std+2)) cat /etc/strongswan/ipsec.secrets | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-echo;
-#pressEnter
-
-# 3.4 --- Firewall Iptables http,https,dns,ntp,icmp
-tire;
-echo "$c_info 3.4 -----   Проверка настройки межсетевого экрана Iptables http,https,dns,ntp,icmp -------$c_null";
-  echo "$c_lgreen --- статус службы  iptables на HQ-RTR $c_null";
-  qm guest exec $((std+1)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
-  echo "$c_lgreen --- содержание файла iptables  $c_null";
-  qm guest exec $((std+1)) cat /etc/sysconfig/iptables | jq -r '."out-data"'
-  echo "$c_lgreen --- проверка наличия правил $c_null";
-  qm guest exec $((std+1)) iptables \-- -L -v  | jq -r '."out-data"'
-
-  echo "$c_lgreen --- статус службы  iptables на BR-RTR $c_null";
-  qm guest exec $((std+2)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
-  echo "$c_lgreen --- содержание файла iptables  $c_null";
-  qm guest exec $((std+2)) cat /etc/sysconfig/iptables | jq -r '."out-data"'
-  echo "$c_lgreen --- проверка наличия правил $c_null";
-  qm guest exec $((std+2)) iptables \-- -L -v  | jq -r '."out-data"'
-#pressEnter;
-
-# 3.5 --- Принт-сервер cups
-tire;
-echo "$c_info 3.5 -------  Проверка настройки принт-сервера cups на HQ-SRV ---------------------$c_null";
+echo "$c_info 3.6 -------  Проверка настройки принт-сервера cups на HQ-SRV ---------------------$c_null";
   echo "$c_lgreen ------- статус загрузки пакета cups  $c_null";
   qm guest exec $((std+2)) rpm \-- -q cups  | jq -r '."out-data"'
   echo "$c_lgreen --- статус службы cups  $c_null";
@@ -720,80 +671,10 @@ echo "$c_info 3.5 -------  Проверка настройки принт-сер
   echo;
 #pressEnter;
 
-# 3.6 --- Rsyslog
+
+# 3.7 --- Ansible инвентаризация
 tire;
-echo "$c_info 3.6 -------  Проверка настройки rsyslog  на HQ-SRV -----------------------------$c_null";
-  echo "$c_lgreen ------- статус загрузки пакета rsyslog  $c_null";
-  qm guest exec $((std+3)) rpm \-- -q rsyslog  | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы rsyslog  $c_null";
-  qm guest exec $((std+3)) systemctl status rsyslog | jq -r '."out-data"' | grep "Active";
-  echo "$c_lgreen --- содержание файла /etc/rsyslog.d/00_common.conf  $c_null";
-  qm guest exec $((std+3)) cat /etc/rsyslog.d/00_common.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo "$c_lgreen --- содержание каталога /opt/  $c_null";
-  qm guest exec $((std+3)) ls /opt/ | jq -r '."out-data"'
-  echo;
-#  pressEnter;
-  echo "$c_info -------  Проверка настройки rsyslog  на HQ-RTR -----------------------------$c_null";
-  echo "$c_lgreen ------- статус загрузки пакета rsyslog  $c_null";
-  qm guest exec $((std+1)) rpm \-- -q rsyslog  | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы rsyslog  $c_null";
-  qm guest exec $((std+1)) systemctl status rsyslog | jq -r '."out-data"' | grep "Active";
-  echo "$c_lgreen --- содержание файла /etc/rsyslog.conf  $c_null";
-  qm guest exec $((std+1)) cat /etc/rsyslog.d/00_common.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo;
-  echo "$c_info -------  Проверка настройки rsyslog  на BR-RTR -----------------------------$c_null";
-  echo "$c_lgreen ------- статус загрузки пакета rsyslog  $c_null";
-  qm guest exec $((std+2)) rpm \-- -q rsyslog  | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы rsyslog  $c_null";
-  qm guest exec $((std+2)) systemctl status rsyslog | jq -r '."out-data"' | grep "Active";
-  echo "$c_lgreen --- содержание файла /etc/rsyslog.conf  $c_null";
-  qm guest exec $((std+2)) cat /etc/rsyslog.d/00_common.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo;
-  echo "$c_info -------  Проверка настройки rsyslog  на BR-SRV -----------------------------$c_null";
-  echo "$c_lgreen ------- статус загрузки пакета rsyslog  $c_null";
-  qm guest exec $((std+5)) rpm \-- -q rsyslog  | jq -r '."out-data"'
-  echo "$c_lgreen --- статус службы rsyslog  $c_null";
-  qm guest exec $((std+5)) systemctl status rsyslog | jq -r '."out-data"' | grep "Active";
-  echo "$c_lgreen --- содержание файла /etc/rsyslog.conf  $c_null";
-  qm guest exec $((std+5)) cat /etc/rsyslog.d/00_common.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  echo;
-#pressEnter;
-
-# 3.7 ---  Мониторинг Zabbix
-tire;
-echo "$c_info 3.7 -------------- Проверка настройки мониторинга Zabbix на HQ-SRV -----------------------$c_null";
-  echo "$c_lgreen --- установка пакета docker и docker-compose  $c_null";
-  qm guest exec $((std+3)) rpm \-- -qa | jq -r '."out-data"' | grep docker;
-  echo "$c_lgreen --- запуск службы docker и docker-compose  $c_null";
-  qm guest exec $((std+3)) systemctl status docker | jq -r '."out-data"' | grep "Active";
-  echo "$c_lgreen --- запуск контейнеров на HQ-SRV $c_null";
-  qm guest exec $((std+3)) docker ps | jq -r '."out-data"' ;
-  echo "$c_lgreen --- Проверка установки Zabbix agent на HQ-SRV $c_null";
-  qm guest exec $((std+3)) rpm \-- -qa | jq -r '."out-data"' | grep zabbix-agent;
-  qm guest exec $((std+3)) systemctl status zabbix-agent | jq -r '."out-data"' | grep "Active";
-
-  echo "$c_lgreen --- Проверка установки Zabbix agent на HQ-RTR $c_null";
-  qm guest exec $((std+1)) rpm \-- -qa | jq -r '."out-data"' | grep zabbix-agent;
-  qm guest exec $((std+1)) systemctl status zabbix-agent | jq -r '."out-data"' | grep "Active";
-
-  echo "$c_lgreen --- Проверка установки Zabbix agent на BR-RTR $c_null";
-  qm guest exec $((std+2)) rpm \-- -qa | jq -r '."out-data"' | grep zabbix-agent;
-  qm guest exec $((std+2)) systemctl status zabbix-agent | jq -r '."out-data"' | grep "Active";
-
-  echo "$c_lgreen --- Проверка установки Zabbix agent на BR-SRV $c_null";
-  qm guest exec $((std+5)) rpm \-- -qa | jq -r '."out-data"' | grep zabbix-agent;
-  qm guest exec $((std+5)) systemctl status zabbix-agent | jq -r '."out-data"' | grep "Active";
-
-  echo "$c_lgreen --- зайдите на HQ-CLI в браузер и наберите $c_yellow http://mon.au-team.irpo/ $c_null";
-  hqsrv=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep ens18 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-  echo "$c_lgreen ---    (если не получится по имени, тогда $c_yellow http://$hqsrv/ $c_null";
-  # http://mon.au-team.irpo/
-echo
-#pressEnter;
-
-# 3.8 --- Ansible инвентаризация
-tire;
-echo "$c_info 3.8 --------------- Проверка инвентаризации Ansible на BR-SRV -----------------------$c_null";
+echo "$c_info 3.7 --------------- Проверка инвентаризации Ansible на BR-SRV -----------------------$c_null";
   echo "$c_lgreen --- содержание каталога /etc/ansible/PC_INFO  $c_null";
   qm guest exec $((std+5)) ls /etc/ansible/PC_INFO | jq -r '."out-data"'
   echo "$c_lgreen --- содержание плейбука *.yml $c_null";
