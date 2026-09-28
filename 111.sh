@@ -461,27 +461,27 @@ echo;
 # 2.2 --- RAID RAID
 tire;
 echo "$c_info 2.2 --------------- Проверка RAID  на HQ-SRV --------------------------$c_null";
-  qm guest exec $((std+3)) lsblk | jq -r '."out-data"' | iconv -f utf-8 -t latin1;
+  qm guest exec $((std+2)) lsblk | jq -r '."out-data"' | iconv -f utf-8 -t latin1;
   echo "$c_lgreen --- наличие раздела raid  $c_null";
-  qm guest exec $((std+3)) cat /proc/mdstat | jq -r '."out-data"';
-  b1=$(qm guest exec $((std+3)) ls / | jq -r '."out-data"' | grep "raid");
+  qm guest exec $((std+2)) cat /proc/mdstat | jq -r '."out-data"';
+  b1=$(qm guest exec $((std+2)) ls / | jq -r '."out-data"' | grep "raid");
   if [ "$b1" == "raid" ];
      then echo "Каталог $c_lgreen /raid $c_null создан";
      else echo "$c_error нет каталога /raid $c_null"
   fi
   echo "$c_lgreen --- монтирование раздела md0p1  $c_null";
-  qm guest exec $((std+3)) cat /etc/fstab | jq -r '."out-data"' | grep "/raid";
+  qm guest exec $((std+2)) cat /etc/fstab | jq -r '."out-data"' | grep "/raid";
   echo;
 # 2.3 ---  NFS
   echo "$c_info 2.3 ---------- Проверка настройки файлового сервера NFS на HQ-SRV --------$c_null";
-  qm guest exec $((std+3)) cat /etc/exports | jq -r '."out-data"';
+  qm guest exec $((std+2)) cat /etc/exports | jq -r '."out-data"';
   echo "$c_lgreen --- статус службы  nfs  $c_null";
-  qm guest exec $((std+3)) systemctl status nfs | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+2)) systemctl status nfs | jq -r '."out-data"' | grep "Active";
   echo;
   echo "$c_info--- монтирование NFS на HQ-CLI $c_null";
-  qm guest exec $((std+4)) cat /etc/fstab | jq -r '."out-data"' | grep "/mnt/nfs";
+  qm guest exec $((std+3)) cat /etc/fstab | jq -r '."out-data"' | grep "/mnt/nfs";
   echo "$c_lgreen --- статус службы  nfs  $c_null";
-  qm guest exec $((std+4)) systemctl status nfs-client.target | jq -r '."out-data"' | grep "Loaded";
+  qm guest exec $((std+3)) systemctl status nfs-client.target | jq -r '."out-data"' | grep "Loaded";
 echo;
 #pressEnter;
 
@@ -494,23 +494,15 @@ echo "$c_info 2.4 -------- Проверка настройки сервера в
   qm guest exec $((std+0)) cat /etc/chrony.conf | jq -r '."out-data"'  | grep -v '^$\|^\s*\#' | grep allow;
   echo "$c_lgreen --- статус службы  chrony  $c_null";
   qm guest exec $((std+0)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
+  echo "$c_info--- Проверка синхронизации NTP на HQ-RTR $c_null";
+  qm guest exec $((std+1)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+1)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
+  echo "$c_lgreen --- синхронизация  $c_null";
+  qm guest exec $((std+1)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Reference;
+  qm guest exec $((std+1)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
+  echo "$c_lgreen --- статус службы  chrony  $c_null";
+  qm guest exec $((std+1)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
   echo "$c_info--- Проверка синхронизации NTP на BR-RTR $c_null";
-  qm guest exec $((std+2)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
-  qm guest exec $((std+2)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
-  echo "$c_lgreen --- синхронизация  $c_null";
-  qm guest exec $((std+2)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Reference;
-  qm guest exec $((std+2)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
-  echo "$c_lgreen --- статус службы  chrony  $c_null";
-  qm guest exec $((std+2)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
-  echo "$c_info--- Проверка синхронизации NTP на HQ-SRV $c_null";
-  qm guest exec $((std+3)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
-  qm guest exec $((std+3)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
-  echo "$c_lgreen --- синхронизация  $c_null";
-  qm guest exec $((std+3)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Reference;
-  qm guest exec $((std+3)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
-  echo "$c_lgreen --- статус службы  chrony  $c_null";
-  qm guest exec $((std+3)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
-  echo "$c_info--- Проверка синхронизации NTP на HQ-CLI $c_null";
   qm guest exec $((std+4)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
   qm guest exec $((std+4)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
   echo "$c_lgreen --- синхронизация  $c_null";
@@ -518,6 +510,22 @@ echo "$c_info 2.4 -------- Проверка настройки сервера в
   qm guest exec $((std+4)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
   echo "$c_lgreen --- статус службы  chrony  $c_null";
   qm guest exec $((std+4)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
+  echo "$c_info--- Проверка синхронизации NTP на HQ-SRV $c_null";
+  qm guest exec $((std+2)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+2)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
+  echo "$c_lgreen --- синхронизация  $c_null";
+  qm guest exec $((std+2)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Reference;
+  qm guest exec $((std+2)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
+  echo "$c_lgreen --- статус службы  chrony  $c_null";
+  qm guest exec $((std+2)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
+  echo "$c_info--- Проверка синхронизации NTP на HQ-CLI $c_null";
+  qm guest exec $((std+3)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+3)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
+  echo "$c_lgreen --- синхронизация  $c_null";
+  qm guest exec $((std+3)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Reference;
+  qm guest exec $((std+3)) chronyc tracking | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep Leap;
+  echo "$c_lgreen --- статус службы  chrony  $c_null";
+  qm guest exec $((std+3)) systemctl status chronyd | jq -r '."out-data"' | grep "Active";
   echo "$c_info--- Проверка синхронизации NTP на BR-SRV $c_null";
   qm guest exec $((std+5)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "server" | grep -v '^$\|^\s*\#';
   qm guest exec $((std+5)) cat /etc/chrony.conf | jq -r '."out-data"' | grep "pool" | grep -v '^$\|^\s*\#';
@@ -565,11 +573,11 @@ echo;
 tire;
 echo "$c_info 2.7 --------------- Проверка установки приложений на HQ-SRV --------------------------$c_null";
   echo "$c_lgreen --- запуск службы $c_yellow mysql $c_null";
-  qm guest exec $((std+3)) systemctl status mysqld | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+2)) systemctl status mysqld | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- запуск службы $c_yellow appahe2 $c_null";
-  qm guest exec $((std+3)) systemctl status httpd2 | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+2)) systemctl status httpd2 | jq -r '."out-data"' | grep "Active";
 #  echo "$c_lgreen --- зайдите на HQ-CLI в браузер и наберите $c_yellow http://moodle.au-team.irpo/ $c_null";
-# hqsrv=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep ens18 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+# hqsrv=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep ens18 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
 #  echo "$c_lgreen ---    (если не получится по имени, тогда $c_yellow http://$hqsrv/ $c_null";
 echo;
 
@@ -578,10 +586,10 @@ echo;
 tire;
 echo "$c_info 2.8 --------------- Проброс портов на BR-RTR (80-8080, 2026) --------------------$c_null";
   echo "$c_lgreen --- статус службы  iptables  $c_null";
-  qm guest exec $((std+2)) systemctl status iptables | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+4)) systemctl status iptables | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- содержание файла iptables  $c_null";
-#  qm guest exec $((std+2)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
-  qm guest exec $((std+2)) iptables-save | jq -r '."out-data"';
+#  qm guest exec $((std+4)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+4)) iptables-save | jq -r '."out-data"';
   echo "$c_info--------------- Проброс портов на HQ-RTR (2026) ------------------------------$c_null";
   echo "$c_lgreen --- статус службы  iptables  $c_null";
   qm guest exec $((std+1)) systemctl status iptables | jq -r '."out-data"' | grep "Active";
@@ -616,7 +624,7 @@ echo;
 tire;
 echo "$c_info 2.11 ------------ Проверка установки Yandex Browser на  HR-CLI  -------------------$c_null";
   echo "$c_lgreen --- статус службы yandex-browser  $c_null";
-  qm guest exec $((std+4)) rpm \-- -qa | jq -r '."out-data"' | grep yandex
+  qm guest exec $((std+3)) rpm \-- -qa | jq -r '."out-data"' | grep yandex
 echo;
 }
 
@@ -629,24 +637,24 @@ echo -e "$c_error                                     МОДУЛЬ 3 $c_null \n\
 tire;
 echo "$c_info 3.1 --------------   Проверка миграции контроллера домена  Samba   ----------------$c_null";
   echo "$c_lgreen---  Подготовка скрипта  миграции Samba AD (samba-tool) на HQ-SRV $c_null";
-  qm guest exec $((std+3)) cat /root/samba-migrate | jq -r '."out-data"' | iconv -f utf-8 -t latin1
+  qm guest exec $((std+2)) cat /root/samba-migrate | jq -r '."out-data"' | iconv -f utf-8 -t latin1
   #echo "$c_lgreen---  Статус службы samba AD на HQ-SRV $c_null";
-  #qm guest exec $((std+3)) systemctl status samba.service | jq -r '."out-data"' | grep "Active";
+  #qm guest exec $((std+2)) systemctl status samba.service | jq -r '."out-data"' | grep "Active";
   #echo "$c_lgreen---  Конфигурация Samba AD (samba-tool) на HQ-SRV $c_null";
-  #qm guest exec $((std+3)) samba-tool domain info 127.0.0.1 | jq -r '."out-data"';
+  #qm guest exec $((std+2)) samba-tool domain info 127.0.0.1 | jq -r '."out-data"';
   #echo "$c_lgreen---  Список пользователей Samba AD $c_null";
-  #qm guest exec $((std+3)) samba-tool user list  | jq -r '."out-data"' | grep .hq;
+  #qm guest exec $((std+2)) samba-tool user list  | jq -r '."out-data"' | grep .hq;
   #echo "$c_lgreen---  Количество пользователей из файлв Users.csv $c_null";
-  #qm guest exec $((std+3)) samba-tool user list | jq -r '."out-data"' | grep -v .hq | wc -l ;
+  #qm guest exec $((std+2)) samba-tool user list | jq -r '."out-data"' | grep -v .hq | wc -l ;
 echo;
 #pressEnter;
 
 # 3.2 --- Certification
 tire;
 echo "$c_info 3.2 ----------   Проверка настройки центра сертификации на HQ-SRV  ----------------$c_null";
-  #qm guest exec $((std+3)) openssl ca  | grep ssl
+  #qm guest exec $((std+2)) openssl ca  | grep ssl
   echo "$c_lgreen --- просмотр сертификата /ca/cacert.pem  $c_null";
-  qm guest exec $((std+3)) openssl \-- x509 -text -noout -in /ca/cacert.pem | jq -r '."out-data"';
+  qm guest exec $((std+2)) openssl \-- x509 -text -noout -in /ca/cacert.pem | jq -r '."out-data"';
 echo;
 #pressEnter;
 
@@ -702,13 +710,13 @@ echo "$c_info 3.4 -----   Проверка настройки межсетево
 tire;
 echo "$c_info 3.5 -------  Проверка настройки принт-сервера cups на HQ-SRV ---------------------$c_null";
   echo "$c_lgreen ------- статус загрузки пакета cups  $c_null";
-  qm guest exec $((std+3)) rpm \-- -q cups  | jq -r '."out-data"'
+  qm guest exec $((std+2)) rpm \-- -q cups  | jq -r '."out-data"'
   echo "$c_lgreen --- статус службы cups  $c_null";
-  qm guest exec $((std+3)) systemctl status cups | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+2)) systemctl status cups | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- содержание файла /etc/cups/cupsd.conf  $c_null";
-  qm guest exec $((std+3)) cat /etc/cups/cupsd.conf | jq -r '."out-data"'| sed -n "/<Location /,/<\/Location/p"
+  qm guest exec $((std+2)) cat /etc/cups/cupsd.conf | jq -r '."out-data"'| sed -n "/<Location /,/<\/Location/p"
   echo "$c_lgreen --- проверка подключения принтера на HQ-CLI $c_null";
-  qm guest exec $((std+4)) lpstat \-- -p | jq -r '."out-data"' | iconv -f utf-8 -t latin1
+  qm guest exec $((std+3)) lpstat \-- -p | jq -r '."out-data"' | iconv -f utf-8 -t latin1
   echo;
 #pressEnter;
 
