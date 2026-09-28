@@ -651,7 +651,7 @@ tire;
 echo "$c_info 3.4 ----------   Проверка настройки центра сертификации на HQ-SRV  ----------------$c_null";
   #qm guest exec $((std+2)) openssl ca  | grep ssl
   echo "$c_lgreen --- просмотр сертификата   $c_null";
-  qm guest exec $((std+2)) openssl -- x509 -text -noout -in ca.cer | jq -r '."out-data"';
+  qm guest exec $((std+2)) openssl x509 -text -noout -in ca.cer | jq -r '."out-data"';
 echo;
 #pressEnter;
 
