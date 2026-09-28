@@ -2,12 +2,12 @@
 #  ---------    Запуск скрипта  -   ./check N_виртуальной машины_ISP  ----------
 #  ----------------------   ./check 4011   ----------------------------------------
 #  ---------    N_виртуальной машины_ISP  передается в качестве переменной  $1 ----
-#  ISP     - 4011   0
-#  HQ-RTR  - 4012   +1
-#  BR-RTR  - 4013   +2
-#  HQ-SRV  - 4014   +3
-#  HQ-CLI  - 4015   +4
-#  BR-SRV  - 4016   +5
+#  ISP     - 4011   0  0
+#  HQ-RTR  - 4012   +1  1
+#  BR-RTR  - 4013   +2  4
+#  HQ-SRV  - 4014   +3  2
+#  HQ-CLI  - 4015   +4  3
+#  BR-SRV  - 4016   +5  5
 # variable
 std=$1; inet="8.8.8.8"; jq="(jq -r '."out-data"')"
 #  настройка цвета шрифтов
@@ -59,9 +59,9 @@ echo "$c_info 1.1 --------------------- Базовая настройка уст
   echo "$c_lgreen --- Имена узлов $c_null";
   echo -n "Имя узла ISP     =   ";   qm guest exec $std cat /etc/hostname | jq -r '."out-data"';
   echo -n "Имя узла HQ-RTR  =   ";   qm guest exec $((std+1)) cat /etc/hostname | jq -r '."out-data"';
-  echo -n "Имя узла BR-RTR  =   ";   qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"';
-  echo -n "Имя узла HQ-SRV  =   ";   qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"';
-  echo -n "Имя узла HQ-CLI  =   ";   qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"';
+  echo -n "Имя узла BR-RTR  =   ";   qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"';
+  echo -n "Имя узла HQ-SRV  =   ";   qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"';
+  echo -n "Имя узла HQ-CLI  =   ";   qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"';
   echo -n "Имя узла BR-SRV  =   ";   qm guest exec $((std+5)) cat /etc/hostname | jq -r '."out-data"';
   echo;
 
@@ -87,22 +87,22 @@ echo "$c_info 1.1 --------------------- Базовая настройка уст
   echo "enp7s1 = " $hqr_18;  echo "enp7s2.100 = " $hqr_191;  echo "enp7s2.200 = " $hqr_192;  echo "enp7s.999 = " $hqr_193;
   echo "tunnel = " $hqr_tu;
   echo "$c_lgreen --- IP-адресация BR-RTR $c_null";
-  #qm guest exec $((std+2)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
-  brr_18=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-  brr_19=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep enp7s2 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-  brr_tu=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep tun | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  #qm guest exec $((std+4)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
+  brr_18=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  brr_19=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep enp7s2 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  brr_tu=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep tun | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   if [ -z $brr_tu ];
   then
-    brr_tu=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep gre | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+    brr_tu=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep gre | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   fi
   echo "enp7s1 = " $brr_18; echo "enp7s2 = " $brr_19; echo "tunnel = " $brr_tu;
   echo "$c_lgreen --- IP-адресация HQ-SRV $c_null";
-  #qm guest exec $((std+3)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
-  hqsrv=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  #qm guest exec $((std+2)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
+  hqsrv=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   echo "enp7s1 = " $hqsrv;
   echo "$c_lgreen --- IP-адресация HQ-CLI $c_null";
-  #qm guest exec $((std+4)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
-  hqcli=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  #qm guest exec $((std+3)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
+  hqcli=$(qm guest exec $((std+3)) ip \-- -br a | jq -r '."out-data"' | grep enp7s1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   echo "enp7s1 = " $hqcli;
   echo "$c_lgreen --- IP-адресация BR-SRV $c_null";
   #qm guest exec $((std+5)) ip \-- -br -c a | jq -r '."out-data"' | grep -v lo;
@@ -128,12 +128,12 @@ echo;
 echo;
   #dns_brrtr=$(qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"');
   echo -n  "$c_lgreen --- Маршрутизация на BR-RTR net.ipv4.ip_forward = $c_null";
-  qm guest exec $((std+2)) cat /proc/sys/net/ipv4/ip_forward | jq -r '."out-data"';
+  qm guest exec $((std+4)) cat /proc/sys/net/ipv4/ip_forward | jq -r '."out-data"';
   echo "$c_lgreen --- Маршруты BR-RTR $c_null";
-  qm guest exec $((std+2)) ip \-- -br -c r | jq -r '."out-data"' | grep -v lo;
+  qm guest exec $((std+4)) ip \-- -br -c r | jq -r '."out-data"' | grep -v lo;
 echo;
-#dns_hqsrv=$(qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"');
-#dns_hqcli=$(qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"');
+#dns_hqsrv=$(qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"');
+#dns_hqcli=$(qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"');
 #dns_brsrv=$(qm guest exec $((std+5)) cat /etc/hostname | jq -r '."out-data"');
 echo;
 #pressEnter;
@@ -158,17 +158,17 @@ echo "$c_info---------------- Проверка сетевой связаннос
 echo;
 echo "$c_info---------------- Проверка сетевой связанности с узла HQ-SRV -------------$c_null";
   echo "$c_yellow   ping в Интернет  $c_null"
-  qm guest exec $((std+3)) ping \-- -c 3 8.8.8.8 | jq -r '."out-data"';
+  qm guest exec $((std+2)) ping \-- -c 3 8.8.8.8 | jq -r '."out-data"';
   if [ -z $hqr_tu ]; 
   then
    echo "$c_lred Туннель не настроен. Сетевой связанности с сегментом  BR  нет $c_null"
   else
   #echo "$c_yellow   связь с BR-SRV $c_null "
-  #qm guest exec $((std+3)) ping \-- -c 2 $brsrv | jq -r '."out-data"';
+  #qm guest exec $((std+2)) ping \-- -c 2 $brsrv | jq -r '."out-data"';
   echo "$c_yellow   связь с HQ-CLI $c_null "
-  qm guest exec $((std+3)) ping \-- -c 2 $hqcli | jq -r '."out-data"';
+  qm guest exec $((std+2)) ping \-- -c 2 $hqcli | jq -r '."out-data"';
   #echo "$c_yellow   трассировка пакетов от  HQ-SRV до BR-SRV $c_null"
-  #qm guest exec $((std+3)) traceroute $brsrv | jq -r '."out-data"';
+  #qm guest exec $((std+2)) traceroute $brsrv | jq -r '."out-data"';
   fi
 echo;
 #pressEnter;
@@ -187,9 +187,9 @@ echo "$c_info------------ Проверка NAT на ISP (iptables) -------------
 #  qm guest exec $((std+1)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
 #  echo;
 #  echo "$c_lgreen --- NAT на BR-RTR (iptables)  $c_null";
-#  qm guest exec $((std+2)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep "MASQUERADE"
+#  qm guest exec $((std+4)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep "MASQUERADE"
 #  echo "$c_lgreen --- статус службы  iptables  $c_null";
-#  qm guest exec $((std+2)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
+#  qm guest exec $((std+4)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
 #echo;
 #pressEnter;
 
@@ -197,9 +197,9 @@ echo "$c_info------------ Проверка NAT на ISP (iptables) -------------
 tire;
 echo "$c_info 1.3 ------------ Создание и настройка пользователей ------------$c_null";
   echo "$c_lgreen --- Проверка пользователей на  HR-SRV $c_null";
-  qm guest exec $((std+3)) cat /etc/passwd | jq -r '."out-data"' | grep sshuser
-  qm guest exec $((std+3)) id sshuser | jq -r '."out-data"' | grep sshuser | iconv -f utf-8 -t latin1
-  qm guest exec $((std+3)) cat /etc/sudoers | jq -r '."out-data"' | grep sshuser 
+  qm guest exec $((std+2)) cat /etc/passwd | jq -r '."out-data"' | grep sshuser
+  qm guest exec $((std+2)) id sshuser | jq -r '."out-data"' | grep sshuser | iconv -f utf-8 -t latin1
+  qm guest exec $((std+2)) cat /etc/sudoers | jq -r '."out-data"' | grep sshuser 
   echo;
   echo "$c_lgreen --- Проверка пользователей на  BR-SRV $c_null";
   qm guest exec $((std+5)) cat /etc/passwd | jq -r '."out-data"' | grep sshuser
@@ -211,8 +211,8 @@ echo "$c_info 1.3 ------------ Создание и настройка польз
   qm guest exec $((std+1)) cat /etc/sudoers | jq -r '."out-data"' | grep net_admin 
   echo;
   echo "$c_lgreen --- Проверка пользователей на  BR-RTR $c_null";
-  qm guest exec $((std+2)) cat /etc/passwd | jq -r '."out-data"' | grep net_admin
-  qm guest exec $((std+2)) cat /etc/sudoers | jq -r '."out-data"' | grep net_admin
+  qm guest exec $((std+4)) cat /etc/passwd | jq -r '."out-data"' | grep net_admin
+  qm guest exec $((std+4)) cat /etc/sudoers | jq -r '."out-data"' | grep net_admin
 echo;
 #pressEnter;
 
@@ -224,14 +224,14 @@ tire;
 echo "$c_info 1.5 ----------------- Проверка настройки SSH ----------------------------$c_null";
   #ssh \-- root@192.168.1.1 -p 2025 | jq -r '."out-data"';
   echo "$c_yellow --- SSH на сервере HQ-SRV $c_null";
-  qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "Port ";
-  qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "PermitRootLogin ";
-  qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "MaxAuthTries ";
-  qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "AllowUsers ";
-  qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner ;
-  b1=$(qm guest exec $((std+3)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner) ;
+  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "Port ";
+  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "PermitRootLogin ";
+  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "MaxAuthTries ";
+  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "AllowUsers ";
+  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner ;
+  b1=$(qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner) ;
   echo -n "$c_lgreen Banner  - $c_null";
-  qm guest exec $((std+3)) cat ${b1:7} | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+2)) cat ${b1:7} | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
   echo;
   echo "$c_yellow --- SSH на сервере BR-SRV $c_null";
   qm guest exec $((std+5)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "Port ";
@@ -254,14 +254,14 @@ echo "$c_info 1.5 ----------------- Проверка настройки SSH ----
   qm guest exec $((std+1)) cat ${b1:7} | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
   echo;
   echo "$c_yellow --- SSH на роутере BR-RTR $c_null";
-  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "Port ";
-  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "PermitRootLogin ";
-  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "MaxAuthTries ";
-  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "AllowUsers ";
-  qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner ;
-  b1=$(qm guest exec $((std+2)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner) ;
+  qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "Port ";
+  qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "PermitRootLogin ";
+  qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "MaxAuthTries ";
+  qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep "AllowUsers ";
+  qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner ;
+  b1=$(qm guest exec $((std+4)) cat /etc/openssh/sshd_config | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep -i banner) ;
   echo -n "$c_lgreen Banner  - $c_null";
-  qm guest exec $((std+2)) cat ${b1:7} | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+4)) cat ${b1:7} | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
 echo;
 #pressEnter;
 
@@ -276,10 +276,10 @@ echo "$c_info 1.6 --------- Проверка настройки туннеля G
   fi
   echo "tunnel = " $hqr_tu;
   echo "$c_lgreen --- туннель BR-RTR $c_null";
-  brr_tu=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep tun | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+  brr_tu=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep tun | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   if [ -z $brr_tu ];
   then
-   brr_tu=$(qm guest exec $((std+2)) ip \-- -br a | jq -r '."out-data"' | grep gre | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+   brr_tu=$(qm guest exec $((std+4)) ip \-- -br a | jq -r '."out-data"' | grep gre | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
   fi
   echo "tunnel = " $brr_tu;
   echo;
@@ -300,11 +300,11 @@ echo "$c_info 1.7 --------- Проверка настройки динамиче
   echo;
   echo "$c_info --- BR-RTR $c_null";
   echo "$c_lgreen --- содержание файла  /etc/frr/daemons  $c_null";
-  qm guest exec $((std+2)) cat /etc/frr/daemons | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep yes;
+  qm guest exec $((std+4)) cat /etc/frr/daemons | jq -r '."out-data"' | grep -v '^$\|^\s*\#' | grep yes;
   echo "$c_lgreen --- статус службы  frr  $c_null";
-  qm guest exec $((std+2)) systemctl status frr | jq -r '."out-data"' | grep "Active";
+  qm guest exec $((std+4)) systemctl status frr | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- содержание файла  /etc/frr/frr.conf  $c_null";
-  qm guest exec $((std+2)) cat /etc/frr/frr.conf | jq -r '."out-data"' ;
+  qm guest exec $((std+4)) cat /etc/frr/frr.conf | jq -r '."out-data"' ;
 echo;
 #pressEnter;
 
@@ -322,10 +322,10 @@ echo "$c_info 1.8 ------------ Проверка настройки NAT на ро
   qm guest exec $((std+1)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
   echo;
   echo "$c_lgreen --- NAT на BR-RTR (iptables)  $c_null";
-  qm guest exec $((std+2)) iptables \-- -t nat -L -v  | jq -r '."out-data"' | grep "MASQUERADE"
-# qm guest exec $((std+2)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep "MASQUERADE"
+  qm guest exec $((std+4)) iptables \-- -t nat -L -v  | jq -r '."out-data"' | grep "MASQUERADE"
+# qm guest exec $((std+4)) cat /etc/sysconfig/iptables | jq -r '."out-data"' | grep "MASQUERADE"
   echo "$c_lgreen --- статус службы  iptables  $c_null";
-  qm guest exec $((std+2)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
+  qm guest exec $((std+4)) systemctl status iptables | jq -r '."out-data"' | grep "Active"
 echo;
 #pressEnter;
 
@@ -363,10 +363,10 @@ echo "$c_info 1.9 --------- Проверка настройки DHCP  ----------
 
   echo "$c_info --- Проверка динамического адреса на HQ-CLI $c_null";
   echo "$c_lgreen --- содержание файла  options  $c_null";
-  qm guest exec $((std+4)) cat /etc/net/ifaces/enp6s18/options | jq -r '."out-data"' | grep BOOTPROTO;
+  qm guest exec $((std+3)) cat /etc/net/ifaces/enp7s1/options | jq -r '."out-data"' | grep BOOTPROTO;
   echo "$c_lgreen --- настройка интерфейса enp6s18  $c_null";
-  qm guest exec $((std+4)) ip \-- -c a | jq -r '."out-data"' | grep -v lo | grep dynamic;
-  qm guest exec $((std+4)) ip \-- -c a | jq -r '."out-data"' | grep enp6s18;
+  qm guest exec $((std+3)) ip \-- -c a | jq -r '."out-data"' | grep -v lo | grep dynamic;
+  qm guest exec $((std+3)) ip \-- -c a | jq -r '."out-data"' | grep enp6s18;
 echo;
 #pressEnter;
 
@@ -374,45 +374,45 @@ echo;
 # 1.10 --- DNS
 tire;
 echo "$c_info 1.10 --------------- Проверка настройки DNS -----------------------------$c_null";
-  #dns_brrtr=$(qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"');
+  #dns_brrtr=$(qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"');
   #dns_isp=$(qm guest exec $std cat /etc/hostname | jq -r '."out-data"');
   #dns_hqrtr=$(qm guest exec $((std+1)) cat /etc/hostname | jq -r '."out-data"');
-  #dns_hqsrv=$(qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"');
-  #dns_hqcli=$(qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"');
+  #dns_hqsrv=$(qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"');
+  #dns_hqcli=$(qm guest exec $((std+3)) cat /etc/hostname | jq -r '."out-data"');
   #dns_brsrv=$(qm guest exec $((std+5)) cat /etc/hostname | jq -r '."out-data"');
-  dns1=$(qm guest exec $((std+3)) rpm \-- -qa | jq -r '."out-data"' | grep dnsmasq);
-  # dns2=$(qm guest exec $((std+3)) rpm \-- -qa | jq -r '."out-data"' | grep bind9);
+  dns1=$(qm guest exec $((std+2)) rpm \-- -qa | jq -r '."out-data"' | grep dnsmasq);
+  # dns2=$(qm guest exec $((std+2)) rpm \-- -qa | jq -r '."out-data"' | grep bind9);
   if [ -z $dns1 ];
   then
      echo "$c_info --- Проверка настройки DNS (bind9) на HQ-SRV $c_null";
      echo "$c_lgreen --- содержание файла  /etc/named.conf  $c_null";
-     qm guest exec $((std+3)) cat /etc/named.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+     qm guest exec $((std+2)) cat /etc/named.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
      echo "$c_lgreen --- статус службы  bind9  $c_null";
-     qm guest exec $((std+3)) systemctl status named | jq -r '."out-data"' | grep "Active";
+     qm guest exec $((std+2)) systemctl status named | jq -r '."out-data"' | grep "Active";
      echo;
   else
      echo "$c_info --- Проверка настройки DNS (dnsmasq) на HQ-SRV $c_null";
      echo "$c_lgreen --- содержание файла  dnsmasq.conf  $c_null";
-     qm guest exec $((std+3)) cat /etc/dnsmasq.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+     qm guest exec $((std+2)) cat /etc/dnsmasq.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
      echo "$c_lgreen --- статус службы  dnsmasq  $c_null";
-     qm guest exec $((std+3)) systemctl status dnsmasq | jq -r '."out-data"' | grep "Active";
+     qm guest exec $((std+2)) systemctl status dnsmasq | jq -r '."out-data"' | grep "Active";
      echo;
   fi
   echo "$c_info----------------------  Проверка DNS  на HQ-CLI  ------------------------$c_null";
   echo "$c_lgreen --- содержание файла  resolv.conf  $c_null";
-  qm guest exec $((std+4)) cat /etc/resolv.conf | jq -r '."out-data"'   | grep -v '^$\|^\s*\#';
+  qm guest exec $((std+3)) cat /etc/resolv.conf | jq -r '."out-data"'   | grep -v '^$\|^\s*\#';
   echo "$c_yellow --- ping HQ-RTR  $c_null";
   dns_hqrtr=$(qm guest exec $((std+1)) cat /etc/hostname | jq -r '."out-data"');
   echo "$c_lgreen hostname  ---  $dns_hqrtr $c_null";
-  qm guest exec $((std+4)) ping \-- -c 2 hq-rtr.au-team.irpo | jq -r '."out-data"';
+  qm guest exec $((std+1)) ping \-- -c 2 hq-rtr.au-team.irpo | jq -r '."out-data"';
   echo "$c_yellow --- ping BR-RTR  $c_null";
-  dns_brrtr=$(qm guest exec $((std+2)) cat /etc/hostname | jq -r '."out-data"');
+  dns_brrtr=$(qm guest exec $((std+4)) cat /etc/hostname | jq -r '."out-data"');
   echo "$c_lgreen hostname  ---  $dns_brrtr $c_null";
   qm guest exec $((std+4)) ping \-- -c 2 br-rtr.au-team.irpo | jq -r '."out-data"';
   echo "$c_yellow --- ping BR-SRV $c_null";
   dns_brsrv=$(qm guest exec $((std+5)) cat /etc/hostname | jq -r '."out-data"');
   echo "$c_lgreen hostname  ---  $dns_brsrv $c_null";
-  qm guest exec $((std+4)) ping \-- -c 2 br-srv.au-team.irpo | jq -r '."out-data"';
+  qm guest exec $((std+5)) ping \-- -c 2 br-srv.au-team.irpo | jq -r '."out-data"';
 echo;
 #pressEnter;
 
@@ -424,11 +424,11 @@ echo "$c_info 1.11 ------------- Проверка настройки часов�
   echo "$c_lgreen --- Проверка часового пояса на HQ-RTR $c_null";
   qm guest exec $((std+1)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
   echo "$c_lgreen --- Проверка часового пояса на BR-RTR $c_null";
-  qm guest exec $((std+2)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
-  echo "$c_lgreen --- Проверка часового пояса на HQ-SRV $c_null";
-  qm guest exec $((std+3)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
-  echo "$c_lgreen --- Проверка часового пояса на HQ-CLI $c_null";
   qm guest exec $((std+4)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
+  echo "$c_lgreen --- Проверка часового пояса на HQ-SRV $c_null";
+  qm guest exec $((std+2)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
+  echo "$c_lgreen --- Проверка часового пояса на HQ-CLI $c_null";
+  qm guest exec $((std+3)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
   echo "$c_lgreen --- Проверка часового пояса на BR-SRV $c_null";
   qm guest exec $((std+5)) timedatectl status | jq -r '."out-data"' | grep "Time zone";
 echo -e "\n\n";
