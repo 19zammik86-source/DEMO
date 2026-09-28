@@ -667,6 +667,7 @@ echo "$c_info 3.5 -------  Проверка утилиты состояния с
   qm guest exec $((std+2)) cat /etc/default/atop | jq -r '."out-data"'
   echo "$c_lgreen --- проверка журнала логов $c_null";
   qm guest exec $((std+2)) ls /var/log/atop | jq -r '."out-data"'
+  echo "$c_lgreen --- смотри логи в ручную /var/log/atop $c_null";
   echo;
 #pressEnter;
 
@@ -704,27 +705,26 @@ echo "$c_info 3.7 --------------- Проверка инвентаризации 
 echo;
 #pressEnter;
 
-# 3.9 --- Ansible резервное копирование
-tire;
-echo "$c_info 3.9 ----- Проверка резервного копирования Ansible на BR-SRV -----------------------$c_null";
-  echo "$c_lgreen --- содержание каталога /etc/ansible/NETWORK_INFO  $c_null";
-  qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO | jq -r '."out-data"'
-  echo "$c_lgreen --- содержание плейбука *.yml $c_null";
-  b1=$(qm guest exec $((std+5)) ls /etc/ansible/ | jq -r '."out-data"' | grep -i back)
-  echo "$c_lyellow Имя плейбука =  $c_lred $b1 $c_null";
-  qm guest exec $((std+5)) cat /etc/ansible/backup.yml | jq -r '."out-data"' | iconv -f utf-8 -t latin1
+# 3.8 --- Проверка настройки fail2ban на HQ-SRV
+  tire;
+  echo "$c_info 3.8 -------  Проверка настройки fail2ban на HQ-SRV ---------------------$c_null";
+  echo "$c_lgreen ------- статус загрузки пакета fail2ban  $c_null";
+  qm guest exec $((std+2)) rpm \-- -q fail2ban  | jq -r '."out-data"'
+  echo "$c_lgreen --- статус службы fail2ban  $c_null";
+  qm guest exec $((std+2)) systemctl status fail2ban | jq -r '."out-data"' | grep "Active";
+  echo "$c_lgreen --- содержание конфигурационного файла /etc/fail2ban/jail.conf  $c_null";
+  qm guest exec $((std+2)) cat /etc/fail2ban/jail.conf | jq -r '."out-data"'
   echo;
-  pressEnter;
-  echo "$c_lgreen --- содержание каталога резервирования виртуальной машины HQ-RTR $c_null";
-  b1=$(qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO | jq -r '."out-data"' | grep -i hq-rtr)
-  #qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO/hq-rtr | jq -r '."out-data"' |  grep -i hq-rtr
-  qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO/$b1 | jq -r '."out-data"'
-  echo "$c_lgreen --- содержание каталога резервирования виртуальной машины BR-RTR $c_null";
-  b1=$(qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO | jq -r '."out-data"' | grep -i br-rtr)
-  # qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO/br-rtr | jq -r '."out-data"' |  grep -i br-rtr
-  qm guest exec $((std+5)) ls /etc/ansible/NETWORK_INFO/$b1 | jq -r '."out-data"'
-echo;
-}
+#pressEnter;
+
+# 3.9 --- Кибер-Бекап
+  tire;
+  echo "$c_info 3.9 -------  Проверка Кибер-бекап на HQ-SRV ---------------------$c_null";
+  echo "$c_lgreen --- смотри в ручную  $c_null";
+  echo;
+#pressEnter;
+  
+ }
 
 function main () {
         clear
