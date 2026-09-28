@@ -615,17 +615,14 @@ echo -e "$c_error                                     МОДУЛЬ 3 $c_null \n\
 
 # 3.1 --- Samba AD Migration
 tire;
-echo "$c_info 3.1 --------------   Проверка миграции контроллера домена  Samba   ----------------$c_null";
-  echo "$c_lgreen---  Подготовка скрипта  миграции Samba AD (samba-tool) на HQ-SRV $c_null";
-  qm guest exec $((std+2)) cat /root/samba-migrate | jq -r '."out-data"' | iconv -f utf-8 -t latin1
-  #echo "$c_lgreen---  Статус службы samba AD на HQ-SRV $c_null";
-  #qm guest exec $((std+2)) systemctl status samba.service | jq -r '."out-data"' | grep "Active";
-  #echo "$c_lgreen---  Конфигурация Samba AD (samba-tool) на HQ-SRV $c_null";
-  #qm guest exec $((std+2)) samba-tool domain info 127.0.0.1 | jq -r '."out-data"';
-  #echo "$c_lgreen---  Список пользователей Samba AD $c_null";
-  #qm guest exec $((std+2)) samba-tool user list  | jq -r '."out-data"' | grep .hq;
-  #echo "$c_lgreen---  Количество пользователей из файлв Users.csv $c_null";
-  #qm guest exec $((std+2)) samba-tool user list | jq -r '."out-data"' | grep -v .hq | wc -l ;
+echo "$c_info 3.1 --------------   Импорт пользователей в домена  Samba   ----------------$c_null";
+  echo "$c_lgreen---  Количество пользователей из файлв Users.csv $c_null";
+  qm guest exec $((std+5)) samba-tool user list | jq -r '."out-data"' | grep -v hquser | wc -l ;
+  #echo "$c_info---------------------   Настройка (smb.conf) -----------------------$c_null";
+  #qm guest exec $((std+5)) cat /etc/samba/smb.conf | jq -r '."out-data"' | grep -v '^$\|^\s*\#';
+  #echo "$c_info--------------   Cоздание и настройка каталогов Samba  ----------------$c_null";
+  #echo "$c_error------------------------- каталог /srv -------------------------------$c_null";
+  #qm guest exec $((std+1)) ls \-- -all /srv | jq -r '."out-data"';
 echo;
 #pressEnter;
 # 3.2 --- Nginx
@@ -645,6 +642,7 @@ echo "$c_info 3.3 ------------ Проверка web-based аутентифика
   echo "$c_lgreen --- содержание файла /etc/nginx/.htpasswd  $c_null";
   qm guest exec $((std+0)) cat /etc/nginx/.htapasswd | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
 echo;
+echo "$c_lgreen --- зайдите на HQ-CLI в браузер и наберите $c_yellow http://web.au-team.irpo/ $c_null";
 #pressEnter;
 
 
@@ -655,6 +653,21 @@ echo "$c_info 3.4 ----------   Проверка настройки центра 
   echo "$c_lgreen --- просмотр сертификата /ca/cacert.pem  $c_null";
   qm guest exec $((std+2)) openssl \-- x509 -text -noout -in /ca/cacert.pem | jq -r '."out-data"';
 echo;
+#pressEnter;
+
+
+# 3.5 --- Мониторинг atop
+tire;
+echo "$c_info 3.6 -------  Проверка утилиты состояния сервера atop на HQ-SRV ---------------------$c_null";
+  echo "$c_lgreen ------- статус загрузки пакета atop  $c_null";
+  qm guest exec $((std+2)) rpm \-- -q atop  | jq -r '."out-data"'
+  echo "$c_lgreen --- статус службы atop  $c_null";
+  qm guest exec $((std+2)) systemctl status atop | jq -r '."out-data"' | grep "Active";
+  echo "$c_lgreen --- содержание файла /etc/default/atop  $c_null";
+  qm guest exec $((std+2)) cat /etc/default/atop | jq -r '."out-data"'| sed -n "/<Location /,/<\/Location/p"
+  echo "$c_lgreen --- проверка журнала логов $c_null";
+  qm guest exec $((std+2)) ls -la /var/log/atop | jq -r '."out-data"'| grep -v '^$\|^\s*\#';
+  echo;
 #pressEnter;
 
 # 3.6 --- Принт-сервер cups
