@@ -1,7 +1,7 @@
 #!/bin/bash
 # Настройка hostname
 hostnamectl set-hostname hq-rtr.au-team.irpo
-
+apt-get update && apt-get install -y chrony tzdata
 #Создание enp7s2
 mkdir -p /etc/net/ifaces/enp7s2
 cp -r /etc/net/ifaces/enp7s1/options /etc/net/ifaces/enp7s2/options
