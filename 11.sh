@@ -713,7 +713,7 @@ echo;
   echo "$c_lgreen --- статус службы fail2ban  $c_null";
   qm guest exec $((std+2)) systemctl status fail2ban | jq -r '."out-data"' | grep "Active";
   echo "$c_lgreen --- содержание конфигурационного файла /etc/fail2ban/jail.conf  $c_null";
-  qm guest exec $((std+2)) cat /etc/fail2ban/jail.conf | jq -r '."out-data"'
+  qm guest exec $((std+2)) cat /etc/fail2ban/jail.conf | grep sshd | jq -r '."out-data"'
   echo;
 #pressEnter;
 
