@@ -8,8 +8,6 @@
 #  HQ-SRV  - 4014   +3  2
 #  HQ-CLI  - 4015   +4  3
 #  BR-SRV  - 4016   +5  5
-figlet "DEMO-2027"
-figlet "CCA-42"
 
 # variable
 std=$1; inet="8.8.8.8"; jq="(jq -r '."out-data"')"
@@ -46,6 +44,8 @@ function tire {
 function heads {
   clear
   echo;
+  figlet "DEMO-2027"
+figlet "CCA-42"
   echo "$c_lred ------------ Автоматизированная  проверка стенда Демонстрационного экзамена --------------$c_null";
   echo -e "$c_lred                              стенд $std - $((std+5))   $c_null \n";
 }
