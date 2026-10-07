@@ -51,7 +51,7 @@ dhcp-range=192.168.200.2,192.168.200.10,999h
 dhcp-option=3,192.168.200.1
 dhcp-option=6,192.168.100.2
 dhcp-option=15,au-team.irpo
-interface=enp7s2.200
+interface=
 EOF
 
 # Включение и запуск dnsmasq
@@ -69,7 +69,7 @@ TUNLOCAL=172.16.1.2
 TUNREMOTE=172.16.2.2
 TUNTTL=64
 TUNOPTIONS='ttl 64'
-HOST=enp7s1
+HOST=
 EOF
 
 # Файл ipv4address
