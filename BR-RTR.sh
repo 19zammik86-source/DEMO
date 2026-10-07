@@ -31,7 +31,7 @@ TUNLOCAL=172.16.2.2
 TUNREMOTE=172.16.1.2
 TUNTTL=64
 TUNOPTIONS='ttl 64'
-HOST=enp7s1
+HOST=
 EOF
 
 # Файл ipv4address
@@ -59,7 +59,7 @@ vtysh << 'EOF'
 conf
 router ospf
 network 192.168.0.0/28 area 0
-network 10.10.10.0/30 area 0
+network 10.10.11.0/30 area 0
 exit
 int tun0
 ip ospf authentication message-digest
