@@ -1,0 +1,72 @@
+---
+- name: Сбор данных о загрузке дисков на ALT Linux
+  hosts: alt_linux_servers # Укажите вашу группу хостов из inventory
+  become: yes              # Требуются права root для полного просмотра дисков
+  gather_facts: yes
+
+  vars:
+    # Порог заполнения для вывода предупреждения (в процентах)
+    disk_warn_threshold: 80 
+    local_report_dir: "./disk_reports"
+
+  tasks:
+    - name: Создание локальной директории для отчетов
+      ansible.builtin.file:
+        path: "{{ local_report_dir }}"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+
+    - name: Получение информации о файловых системах (df -hT)
+      ansible.builtin.command: df -hT
+      register: df_output
+      changed_when: false
+
+    - name: Получение информации о блочных устройствах (lsblk -f)
+      ansible.builtin.command: lsblk -f
+      register: lsblk_output
+      changed_when: false
+
+    - name: Получение информации об инодах (df -iT)
+      ansible.builtin.command: df -iT
+      register: inode_output
+      changed_when: false
+
+    - name: Анализ заполненности разделов через ansible_facts
+      ansible.builtin.debug:
+        msg: >
+          ⚠️ ВНИМАНИЕ: Раздел {{ item.mount }} (устройство {{ item.device }}, ФС {{ item.fstype }}) 
+          заполнен на {{ (100.0 - (item.size_available | float / item.size_total | float * 100.0)) | round(1) }}%
+      loop: "{{ ansible_mounts }}"
+      when: 
+        - item.size_total is defined and item.size_total > 0
+        - (100.0 - (item.size_available | float / item.size_total | float * 100.0)) > disk_warn_threshold
+      loop_control:
+        label: "{{ item.mount }}"
+
+    - name: Формирование и сохранение отчета на локальной машине
+      ansible.builtin.copy:
+        content: |
+          =================================================================
+          Отчет по дисковой подсистеме для хоста: {{ inventory_hostname }}
+          Дата сбора: {{ ansible_date_time.iso8601 }}
+          ОС: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          =================================================================
+
+          === 1. Использование пространства (df -hT) ===
+          {{ df_output.stdout }}
+
+          === 2. Использование инодов (df -iT) ===
+          {{ inode_output.stdout }}
+
+          === 3. Структура блочных устройств (lsblk -f) ===
+          {{ lsblk_output.stdout }}
+          =================================================================
+        dest: "{{ local_report_dir }}/{{ inventory_hostname }}_disk_report.txt"
+        mode: '0644'
+      delegate_to: localhost
+
+    - name: Вывод сводки в консоль
+      ansible.builtin.debug:
+        msg: "Отчет для {{ inventory_hostname }} успешно сохранен в {{ local_report_dir }}/{{ inventory_hostname }}_disk_report.txt"
