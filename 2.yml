@@ -1,0 +1,18 @@
+---
+- name: Сбор данных об использовании дискового пространства
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Вывод информации о монтированных разделах
+      ansible.builtin.debug:
+        msg: |
+          === Дисковое пространство {{ inventory_hostname }} ===
+          {% for mount in ansible_mounts %}
+          Точка: {{ mount.mount }}
+          Файловая система: {{ mount.fstype }}
+          Всего: {{ (mount.size_total / (1024*1024*1024)) | round(2) }} GB
+          Занято: {{ (mount.size_used / (1024*1024*1024)) | round(2) }} GB ({{ (mount.size_used * 100 / mount.size_total) | round(1) }}%)
+          Свободно: {{ (mount.size_available / (1024*1024*1024)) | round(2) }} GB
+          Inodes: {{ (mount.inodes_used * 100 / mount.inodes_total) | round(1) }}% занято
+          {% endfor %}
