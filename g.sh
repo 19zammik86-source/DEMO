@@ -12,7 +12,7 @@ openssl req -new -md_gost12_256 -newkey gost2012_256 -pkeyopt paramset:A -nodes 
 
 openssl x509 -req -md_gost12_256 -days 30 -in docker.au-team.irpo.csr -CA ca.cer -CAkey ca.key -CAcreateserial -out docker.au-team.irpo.cer
 
-scp web.au-team.irpo.key root@172.16.1.1:~/
-scp web.au-team.irpo.cer root@172.16.1.1:~/
-scp docker.au-team.irpo.key root@172.16.1.1:~/
-scp docker.au-team.irpo.cer root@172.16.1.1:~/
+#scp web.au-team.irpo.key root@172.16.1.1:~/
+#scp web.au-team.irpo.cer root@172.16.1.1:~/
+#scp docker.au-team.irpo.key root@172.16.1.1:~/
+#scp docker.au-team.irpo.cer root@172.16.1.1:~/
