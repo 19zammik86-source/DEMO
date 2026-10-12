@@ -1,0 +1,19 @@
+---
+- name: Install Midnight Commander on ALT Linux
+  hosts: br-fw  # Замените на вашу группу хостов из инвентаря
+  become: yes             # Требуется sudo/root для установки
+  gather_facts: no        # Факты не обязательны, ускоряет выполнение
+
+  tasks:
+    # 1. Проверяем, установлен ли уже пакет mc
+    - name: Check if mc is installed
+      ansible.builtin.command: rpm -q mc
+      register: mc_check
+      changed_when: false
+      failed_when: mc_check.rc not in [0, 1] 
+      # rc=0 (установлен), rc=1 (не установлен). Другие коды считаем ошибкой.
+
+    # 2. Устанавливаем пакет, если его нет в системе
+    - name: Install Midnight Commander via apt-get
+      ansible.builtin.command: apt-get install -y mc
+      when: mc_check.rc != 0
