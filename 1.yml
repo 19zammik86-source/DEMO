@@ -1,21 +1,12 @@
 ---
-- name: Install Midnight Commander on ALT Linux
-  hosts: br-rtr  # Замените на вашу группу хостов из инвентаря
-  become: yes             # Требуется sudo/root для установки
-  gather_facts: no        # Факты не обязательны, ускоряет выполнение
+- name: Сбор и вывод информации о CPU и RAM
+  hosts: hq-rtr,br-rtr,hq-srv
+  gather_facts: true
 
   tasks:
-    # 1. Проверяем, установлен ли уже пакет mc
-    - name: Check if mc is installed
-      ansible.builtin.command: rpm -q mc
-      register: mc_check
-      changed_when: false
-      failed_when: mc_check.rc not in [0, 1] 
-      # rc=0 (установлен), rc=1 (не установлен). Другие коды считаем ошибкой.
-
-    # 2. Устанавливаем пакет, если его нет в системе
-    - name: Install Midnight Commander via apt-get
-      apt_rpm:
-        name: mc
-        state: present
-        update_cache: yes
+    - name: Вывод краткой информации в консоль
+      ansible.builtin.debug:
+        msg: |
+          === Аппаратные параметры {{ inventory_hostname }} ===
+          CPU: {{ ansible_processor_vcpus }} vCPU, модель {{ ansible_processor[2] if ansible_processor|length > 2 else 'N/A' }}
+          RAM: {{ (ansible_memtotal_mb / 1024) | round(2) }} GB (Всего: {{ ansible_memtotal_mb }} MB)
