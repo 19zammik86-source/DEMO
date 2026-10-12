@@ -1,6 +1,6 @@
 ---
 - name: Install Midnight Commander on ALT Linux
-  hosts: br-fw  # Замените на вашу группу хостов из инвентаря
+  hosts: br-rtr  # Замените на вашу группу хостов из инвентаря
   become: yes             # Требуется sudo/root для установки
   gather_facts: no        # Факты не обязательны, ускоряет выполнение
 
@@ -15,5 +15,7 @@
 
     # 2. Устанавливаем пакет, если его нет в системе
     - name: Install Midnight Commander via apt-get
-      ansible.builtin.command: apt-get install -y mc
-      when: mc_check.rc != 0
+      apt_rpm:
+        name: mc
+        state: present
+        update_cache: yes
