@@ -16,8 +16,8 @@ cat > /var/www/my-domain.host/html/index.html <<EOF
    </body>
 </html>
 EOF
-touch /etc/nginx/sites-available/my-domain.host
-cat > /etc/nginx/sites-available/my-domain.host <<EOF
+touch /etc/nginx/sites-available.d/my-domain.host
+cat > /etc/nginx/sites-available.d/my-domain.host <<EOF
 server
    {
       listen 80;
@@ -31,4 +31,4 @@ server
          }
    }
 EOF
-ln -s /etc/nginx/sites-available/my-domain.host /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available.d/my-domain.host /etc/nginx/sites-enabled.d/
