@@ -1,3 +1,5 @@
+
+
 touch /var/www/html/index.html
 cat > /var/www/html/index.html <<EOF
 <!DOCTYPE html>
@@ -59,3 +61,19 @@ EOF
    cp /var/www/html/index.html /var/www/mysite/
    chown -R root:root /var/www/mysite
    chmod -R 755 /var/www/mysite
+
+
+touch /etc/nginx/conf.d/mysite.conf
+cat > /etc/nginx/conf.d/mysite.conf <<EOF
+server {
+    listen 80;
+    server_name localhost; # или ваш домен, например example.com
+
+    root /var/www/mysite;
+    index index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
