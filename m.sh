@@ -57,5 +57,5 @@ EOF
     
     mkdir -p /var/www/mysite
    cp /var/www/html/index.html /var/www/mysite/
-   chown -R nginx:nginx /var/www/mysite
+   chown -R root:root /var/www/mysite
    chmod -R 755 /var/www/mysite
