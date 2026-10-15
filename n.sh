@@ -4,7 +4,7 @@ chown -R apache:apache /var/www/html
 chmod -R 755 /var/www/html
 mkdir -p /var/www/mywebsite
 touch /var/www/mywebsite/index.php
-cat > /etc/net/ifaces/enp7s2.100/options <<EOF
+cat > /var/www/mywebsite/index.php <<EOF
 <?php
 phpinfo();
 ?>
