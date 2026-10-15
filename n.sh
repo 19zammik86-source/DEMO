@@ -10,5 +10,5 @@ phpinfo();
 ?>
 EOF
  cp /etc/httpd2/sites-available/000-default.conf /etc/httpd2/sites-available/mywebsite.conf
- a2ensite mywebsite
+ #a2ensite mywebsite
  
