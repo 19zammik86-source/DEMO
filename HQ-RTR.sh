@@ -1,0 +1,146 @@
+#!/bin/bash
+# Настройка hostname
+hostnamectl set-hostname hq-rtr.au-team.irpo
+apt-get update && apt-get install -y chrony tzdata
+#Создание enp7s2
+mkdir -p /etc/net/ifaces/enp7s2
+cp -r /etc/net/ifaces/enp7s1/options /etc/net/ifaces/enp7s2/options
+
+# Создание VLAN 100
+mkdir -p /etc/net/ifaces/enp7s2.100/
+cat > /etc/net/ifaces/enp7s2.100/options <<EOF
+TYPE=vlan
+HOST=enp7s2
+VID=100
+BOOTPROTO=static
+EOF
+
+# Создание VLAN 200
+mkdir -p /etc/net/ifaces/enp7s2.200/
+cat > /etc/net/ifaces/enp7s2.200/options <<EOF
+TYPE=vlan
+HOST=enp7s2
+VID=200
+BOOTPROTO=static
+EOF
+
+# Создание VLAN999
+mkdir -p /etc/net/ifaces/enp7s2.999/
+cat > /etc/net/ifaces/enp7s2.999/options <<EOF
+TYPE=vlan
+HOST=enp7s2
+VID=999
+BOOTPROTO=static
+EOF
+echo "192.168.100.1/27" > /etc/net/ifaces/enp7s2.100/ipv4address
+echo "192.168.200.1/28" > /etc/net/ifaces/enp7s2.200/ipv4address
+echo "192.168.99.1/29" > /etc/net/ifaces/enp7s2.999/ipv4address
+
+# Настройка маршутизации
+sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/" "/etc/net/sysctl.conf"
+
+# Перезапуск сети
+systemctl restart network
+
+# Установка и настройка dnsmasq
+apt-get update && apt-get install -y dnsmasq
+cat > /etc/dnsmasq.conf <<EOF
+no-resolv
+domain=au-team.irpo
+dhcp-range=192.168.200.2,192.168.200.10,999h
+dhcp-option=3,192.168.200.1
+dhcp-option=6,192.168.100.2
+dhcp-option=15,au-team.irpo
+interface=enp7s2.200
+EOF
+
+# Включение и запуск dnsmasq
+systemctl enable --now dnsmasq
+systemctl restart dnsmasq
+
+# Создаем директорию и файлы конфигурации
+mkdir -p /etc/net/ifaces/tun0
+
+# Файл options
+cat > /etc/net/ifaces/tun0/options <<EOF
+TYPE=iptun
+TUNTYPE=gre
+TUNLOCAL=172.16.1.2
+TUNREMOTE=172.16.2.2
+TUNTTL=64
+TUNOPTIONS='ttl 64'
+HOST=enp7s1
+EOF
+
+# Файл ipv4address
+echo "10.10.10.1/30" > /etc/net/ifaces/tun0/ipv4address
+
+# Загружаем модуль GRE и перезапускаем сеть
+modprobe gre
+systemctl restart network
+
+echo "Туннель настроен"
+
+
+
+
+
+# Установка FRR (если не установлен)
+apt-get install -y frr
+
+# Включение OSPF в /etc/frr/daemons (меняем ospfd=no на ospfd=yes)
+sed -i 's/ospfd=no/ospfd=yes/' /etc/frr/daemons
+
+# Перезагрузка демона и запуск FRR
+systemctl daemon-reload
+systemctl enable --now frr
+
+# Настройка OSPF через vtysh (автоматический ввод команд) МЕНЯЙТЕ НА СВОИ АДРЕСА
+vtysh << 'EOF'
+conf
+router ospf
+passive-interface default
+network 192.168.100.0/27 area 0
+network 192.168.200.0/28 area 0
+network 192.168.999.0/29 area 0
+network 10.10.10.0/30 area 0
+exit
+int tun0
+no ip ospf passive
+ip ospf authentication message-digest
+ip ospf message-digest-key 1 md5 P@ssw0rd
+do wr
+exit
+EOF
+
+echo "Настройка OSPF завершена!"
+
+#ставим NAT 
+apt-get install iptables -y
+iptables -t nat -A POSTROUTING -o enp7s1 -j MASQUERADE 
+iptables -t nat -A PREROUTING -i enp7s1 -p tcp --dport 8080 -j DNAT --to-destination 192.168.100.2:80
+iptables -t nat -A PREROUTING -i enp7s1 -p tcp --dport 2027 -j DNAT --to-destination 192.168.100.2:2027
+iptables-save >> /etc/sysconfig/iptables
+systemctl enable --now iptables
+
+# 1. Создание пользователя net_admin (ЛИБО ДРУГОГО ПОЛЬЗОВАТЕЛЯ, ПРИ СМЕНЕ ПОМЕНЯТЬ В ЭТОМ ФАЙЛЕ ИМЯ И Т.Д)
+useradd -m net_admin
+
+# 2. Установка пароля P@$$word (без подтверждения)
+echo "net_admin:P@ssw0rd" | chpasswd
+
+# 3. Добавление в группу wheel
+apt-get install -y shadow-groups
+gpasswd -a net_admin wheel
+
+# 4. Настройка sudo без пароля
+echo "net_admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# 5. Настройка SSH (порт 2027 и запрет root-логина)
+sed -i 's/#Port 22/Port 2027/' /etc/openssh/sshd_config
+sed -i 's/#PermitRootLogin without-password/PermitRootLogin no/' /etc/openssh/sshd_config
+
+# 6. Перезапуск SSH
+systemctl restart sshd
+systemctl enable --now sshd
+echo "Готово! Пользователь net_admin создан, SSH настроен на порт 2027."
